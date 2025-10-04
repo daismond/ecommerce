@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .api.v1.endpoints import auth, products, categories, admin
+from .api.v1.endpoints import auth, products, categories, admin, cart, checkout, webhooks
 
 app = FastAPI(title="E-commerce API")
 
@@ -7,6 +7,9 @@ app = FastAPI(title="E-commerce API")
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(products.router, prefix="/api/v1/products", tags=["Products"])
 app.include_router(categories.router, prefix="/api/v1/categories", tags=["Categories"])
+app.include_router(cart.router, prefix="/api/v1/cart", tags=["Cart"])
+app.include_router(checkout.router, prefix="/api/v1/checkout", tags=["Checkout"])
+app.include_router(webhooks.router, prefix="/api/v1/webhooks", tags=["Webhooks"])
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin"])
 
 

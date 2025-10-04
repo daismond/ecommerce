@@ -5,9 +5,11 @@ from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-# Import your app's Base and engine
+# Import your app's Base and models for Alembic's autogenerate support
 from app.database import Base, DATABASE_URL
-from app.models.user import User # Add other models here
+from app.models.user import User
+from app.models.category import Category
+from app.models.product import Product, ProductVariant
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

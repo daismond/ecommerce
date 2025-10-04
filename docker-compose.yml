@@ -5,9 +5,8 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/code
-    environment:
-      - DATABASE_URL=postgresql://user:password@db:5432/mydatabase
-      - SECRET_KEY=a_very_secret_key_that_should_be_in_env_vars
+    env_file:
+      - ./.env
     depends_on:
       - db
 

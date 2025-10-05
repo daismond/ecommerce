@@ -34,6 +34,7 @@ class Product(Base):
 
     category = relationship("Category", back_populates="products")
     variants = relationship("ProductVariant", back_populates="product", cascade="all, delete-orphan")
+    reviews = relationship("ProductReview", back_populates="product", cascade="all, delete-orphan")
 
     __table_args__ = (
         Index('ix_product_search_vector', search_vector, postgresql_using='gin'),

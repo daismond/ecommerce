@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 import uuid
+from typing import List
 
 from app import crud, models, schemas
 from app.api.v1.dependencies import get_db, get_current_admin_user
@@ -107,3 +108,69 @@ def update_order_status(
     if updated_order is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
     return updated_order
+
+# --- Admin User Management ---
+
+@router.get("/users/", response_model=List[schemas.user.User])
+def read_users(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    current_user: models.user.User = Depends(get_current_admin_user)
+):
+    """
+    Retrieve all users. (Admin only)
+    """
+    users = crud.user.get_users(db, skip=skip, limit=limit)
+    return users
+
+@router.patch("/users/{user_id}", response_model=schemas.user.User)
+def update_user(
+    user_id: uuid.UUID,
+    user_update: schemas.user.UserUpdate,
+    db: Session = Depends(get_db),
+    current_user: models.user.User = Depends(get_current_admin_user)
+):
+    """
+    Update a user's details, e.g., to deactivate (block) them. (Admin only)
+    """
+    updated_user = crud.user.update_user(db, user_id=user_id, user_update=user_update)
+    if updated_user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    return updated_user
+
+import io
+import csv
+from fastapi.responses import StreamingResponse
+
+@router.get("/users/export/csv")
+def export_users_csv(
+    db: Session = Depends(get_db),
+    current_user: models.user.User = Depends(get_current_admin_user)
+):
+    """
+    Export all customer users to a CSV file.
+    """
+    stream = io.StringIO()
+    writer = csv.writer(stream)
+
+    # Header row
+    writer.writerow(["ID", "Email", "First Name", "Last Name", "Role", "Is Active"])
+
+    users = crud.user.get_users(db, limit=10000) # Get all users
+    customers = [user for user in users if user.role == models.user.UserRole.customer]
+
+    for customer in customers:
+        writer.writerow([
+            customer.id,
+            customer.email,
+            customer.first_name,
+            customer.last_name,
+            customer.role.value,
+            customer.is_active
+        ])
+
+    stream.seek(0)
+    response = StreamingResponse(iter([stream.getvalue()]), media_type="text/csv")
+    response.headers["Content-Disposition"] = "attachment; filename=customers.csv"
+    return response

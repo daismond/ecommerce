@@ -1,6 +1,15 @@
 from sqlalchemy.orm import Session
+from typing import List, Optional, Dict, Any
 from .. import models, schemas
 from ..core.security import get_password_hash
+
+def get_user(db: Session, user_id: uuid.UUID) -> Optional[models.user.User]:
+    """Get a single user by their ID."""
+    return db.query(models.user.User).filter(models.user.User.id == user_id).first()
+
+def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[models.user.User]:
+    """Get a list of all users."""
+    return db.query(models.user.User).offset(skip).limit(limit).all()
 
 def get_user_by_email(db: Session, email: str):
     """
@@ -22,4 +31,15 @@ def create_user(db: Session, user: schemas.user.UserCreate):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+    return db_user
+
+def update_user(db: Session, user_id: uuid.UUID, user_update: schemas.user.UserUpdate) -> Optional[models.user.User]:
+    """Update a user's details."""
+    db_user = get_user(db, user_id)
+    if db_user:
+        update_data = user_update.dict(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(db_user, key, value)
+        db.commit()
+        db.refresh(db_user)
     return db_user

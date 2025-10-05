@@ -19,6 +19,7 @@ import AdminProductFormPage from './pages/admin/AdminProductFormPage';
 import AdminOrderListPage from './pages/admin/AdminOrderListPage';
 import AdminOrderDetailPage from './pages/admin/AdminOrderDetailPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import AdminCustomerListPage from './pages/admin/AdminCustomerListPage';
 
 import UserOrderListPage from './pages/account/UserOrderListPage';
 import UserOrderDetailPage from './pages/account/UserOrderDetailPage';
@@ -55,6 +56,7 @@ function App() {
                 <Route path="products/edit/:productId" element={<AdminProductFormPage />} />
                 <Route path="orders" element={<AdminOrderListPage />} />
                 <Route path="orders/:orderId" element={<AdminOrderDetailPage />} />
+                <Route path="customers" element={<AdminCustomerListPage />} />
               </Routes>
             </AdminLayout>
           } />

@@ -1,8 +1,28 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
+from typing import List, Optional
 import uuid
 from datetime import datetime
 
 from .. import models, schemas
+
+def get_order(db: Session, order_id: uuid.UUID) -> Optional[models.order.Order]:
+    """Get a single order by its ID, including items and variants."""
+    return db.query(models.order.Order).options(
+        joinedload(models.order.Order.items).joinedload(models.order.OrderItem.product_variant)
+    ).filter(models.order.Order.id == order_id).first()
+
+def get_orders(db: Session, skip: int = 0, limit: int = 100) -> List[models.order.Order]:
+    """Get a list of all orders."""
+    return db.query(models.order.Order).order_by(models.order.Order.created_at.desc()).offset(skip).limit(limit).all()
+
+def update_order_status(db: Session, order_id: uuid.UUID, status: str) -> Optional[models.order.Order]:
+    """Update the status of an order."""
+    db_order = get_order(db, order_id)
+    if db_order:
+        db_order.status = status
+        db.commit()
+        db.refresh(db_order)
+    return db_order
 
 def generate_order_number() -> str:
     """Generates a unique order number."""

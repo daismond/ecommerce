@@ -31,3 +31,6 @@ class CheckoutSessionCreate(BaseModel):
 class CheckoutSession(BaseModel):
     client_secret: str
     order_id: uuid.UUID
+
+class OrderStatusUpdate(BaseModel):
+    status: str

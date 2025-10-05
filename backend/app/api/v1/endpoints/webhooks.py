@@ -4,6 +4,7 @@ import stripe
 import os
 
 from app import crud
+from app.services import email_service
 from app.api.v1.dependencies import get_db
 
 router = APIRouter()
@@ -37,13 +38,14 @@ async def stripe_webhook(request: Request, stripe_signature: str = Header(None),
         order_id = payment_intent['metadata'].get('order_id')
 
         if order_id:
-            # You would need a CRUD function to get order by ID and update its status
-            # For now, let's assume we have one:
-            # order = crud.order.get(db, id=order_id)
-            # if order:
-            #     order.status = "processing"
-            #     db.commit()
-            print(f"Payment for order {order_id} succeeded.")
+            # Update order status to 'processing'
+            order = crud.order.update_order_status(db, order_id=order_id, status="processing")
+            if order:
+                print(f"Payment for order {order.order_number} succeeded. Status updated to 'processing'.")
+                # Send confirmation email
+                email_service.send_order_confirmation_email(order)
+            else:
+                print(f"Order with ID {order_id} not found.")
         else:
             print("PaymentIntent succeeded but no order_id found in metadata.")
 

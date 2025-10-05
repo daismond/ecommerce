@@ -14,10 +14,11 @@ const NotFoundPage = () => <h1 className="text-3xl font-bold">404 - Page Not Fou
 
 import AdminProductListPage from './pages/admin/AdminProductListPage';
 import AdminProductFormPage from './pages/admin/AdminProductFormPage';
+import AdminOrderListPage from './pages/admin/AdminOrderListPage';
+import AdminOrderDetailPage from './pages/admin/AdminOrderDetailPage';
 
 // Admin placeholder pages
 const AdminDashboard = () => <h2>Admin Dashboard</h2>;
-const AdminOrders = () => <h2>Admin Orders</h2>;
 
 function App() {
   return (
@@ -47,7 +48,8 @@ function App() {
                 <Route path="products" element={<AdminProductListPage />} />
                 <Route path="products/new" element={<AdminProductFormPage />} />
                 <Route path="products/edit/:productId" element={<AdminProductFormPage />} />
-                <Route path="orders" element={<AdminOrders />} />
+                <Route path="orders" element={<AdminOrderListPage />} />
+                <Route path="orders/:orderId" element={<AdminOrderDetailPage />} />
               </Routes>
             </AdminLayout>
           } />

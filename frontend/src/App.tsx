@@ -8,19 +8,17 @@ import AdminLayout from './components/admin/AdminLayout';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import UserProtectedRoute from './components/auth/UserProtectedRoute';
 import AccountLayout from './components/account/AccountLayout';
+import LoginPage from './pages/LoginPage';
 
 // Placeholder pages for routing
 const HomePage = () => <h1 className="text-3xl font-bold">Home Page</h1>;
-const LoginPage = () => <h1 className="text-3xl font-bold">Login Page</h1>;
 const NotFoundPage = () => <h1 className="text-3xl font-bold">404 - Page Not Found</h1>;
 
 import AdminProductListPage from './pages/admin/AdminProductListPage';
 import AdminProductFormPage from './pages/admin/AdminProductFormPage';
 import AdminOrderListPage from './pages/admin/AdminOrderListPage';
 import AdminOrderDetailPage from './pages/admin/AdminOrderDetailPage';
-
-// Admin placeholder pages
-const AdminDashboard = () => <h2>Admin Dashboard</h2>;
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 
 import UserOrderListPage from './pages/account/UserOrderListPage';
 import UserOrderDetailPage from './pages/account/UserOrderDetailPage';
@@ -51,7 +49,7 @@ function App() {
           <Route path="/admin/*" element={
             <AdminLayout>
               <Routes>
-                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="dashboard" element={<AdminDashboardPage />} />
                 <Route path="products" element={<AdminProductListPage />} />
                 <Route path="products/new" element={<AdminProductFormPage />} />
                 <Route path="products/edit/:productId" element={<AdminProductFormPage />} />

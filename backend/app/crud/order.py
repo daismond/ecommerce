@@ -15,6 +15,10 @@ def get_orders(db: Session, skip: int = 0, limit: int = 100) -> List[models.orde
     """Get a list of all orders."""
     return db.query(models.order.Order).order_by(models.order.Order.created_at.desc()).offset(skip).limit(limit).all()
 
+def get_orders_by_user(db: Session, user_id: uuid.UUID) -> List[models.order.Order]:
+    """Get all orders for a specific user."""
+    return db.query(models.order.Order).filter(models.order.Order.user_id == user_id).order_by(models.order.Order.created_at.desc()).all()
+
 def update_order_status(db: Session, order_id: uuid.UUID, status: str) -> Optional[models.order.Order]:
     """Update the status of an order."""
     db_order = get_order(db, order_id)

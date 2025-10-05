@@ -6,6 +6,8 @@ import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import AdminLayout from './components/admin/AdminLayout';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import UserProtectedRoute from './components/auth/UserProtectedRoute';
+import AccountLayout from './components/account/AccountLayout';
 
 // Placeholder pages for routing
 const HomePage = () => <h1 className="text-3xl font-bold">Home Page</h1>;
@@ -19,6 +21,11 @@ import AdminOrderDetailPage from './pages/admin/AdminOrderDetailPage';
 
 // Admin placeholder pages
 const AdminDashboard = () => <h2>Admin Dashboard</h2>;
+
+import UserOrderListPage from './pages/account/UserOrderListPage';
+import UserOrderDetailPage from './pages/account/UserOrderDetailPage';
+
+// Account placeholder pages is now replaced by the actual component
 
 function App() {
   return (
@@ -53,6 +60,21 @@ function App() {
               </Routes>
             </AdminLayout>
           } />
+        </Route>
+
+        {/* User Account Routes */}
+        <Route element={<UserProtectedRoute />}>
+            <Route path="/account/*" element={
+                <Layout>
+                    <AccountLayout>
+                        <Routes>
+                            <Route path="orders" element={<UserOrderListPage />} />
+                            <Route path="orders/:orderId" element={<UserOrderDetailPage />} />
+                            {/* Other account pages will go here */}
+                        </Routes>
+                    </AccountLayout>
+                </Layout>
+            } />
         </Route>
       </Routes>
     </Router>

@@ -9,9 +9,11 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     Numeric,
+    Index,
 )
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
+from sqlalchemy_utils import TSVectorType
 from ..database import Base
 
 class Product(Base):
@@ -27,9 +29,15 @@ class Product(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     category_id = Column(UUID(as_uuid=True), ForeignKey("categories.id"), nullable=False)
-    category = relationship("Category", back_populates="products")
 
+    search_vector = Column(TSVectorType('title', 'description', regconfig='english'))
+
+    category = relationship("Category", back_populates="products")
     variants = relationship("ProductVariant", back_populates="product", cascade="all, delete-orphan")
+
+    __table_args__ = (
+        Index('ix_product_search_vector', search_vector, postgresql_using='gin'),
+    )
 
     def __repr__(self):
         return f"<Product {self.title}>"

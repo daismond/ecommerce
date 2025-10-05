@@ -43,14 +43,17 @@ def get_products(
     db: Session,
     skip: int = 0,
     limit: int = 100,
-    category_id: Optional[uuid.UUID] = None
+    category_id: Optional[uuid.UUID] = None,
+    search_query: Optional[str] = None
 ) -> List[models.product.Product]:
     """
-    Get a list of products, with optional filtering by category.
+    Get a list of products, with optional filtering by category and full-text search.
     """
     query = db.query(models.product.Product)
     if category_id:
         query = query.filter(models.product.Product.category_id == category_id)
+    if search_query:
+        query = query.filter(models.product.Product.search_vector.match(search_query, postgresql_regconfig='english'))
     return query.offset(skip).limit(limit).all()
 
 def update_product(db: Session, product_id: uuid.UUID, product_update: schemas.product.ProductCreate) -> Optional[models.product.Product]:

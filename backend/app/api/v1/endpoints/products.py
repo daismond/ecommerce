@@ -21,14 +21,15 @@ def read_products(
     skip: int = 0,
     limit: int = 100,
     category_id: Optional[uuid.UUID] = None,
+    search: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
     """
     Retrieve products.
 
-    This public endpoint lists products with optional filtering by category.
+    This public endpoint lists products with optional filtering by category and search.
     """
-    products = crud.product.get_products(db, skip=skip, limit=limit, category_id=category_id)
+    products = crud.product.get_products(db, skip=skip, limit=limit, category_id=category_id, search_query=search)
     return products
 
 @router.get("/{product_id}", response_model=schemas.product.Product)

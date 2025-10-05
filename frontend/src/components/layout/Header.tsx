@@ -1,9 +1,18 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 
 const Header: React.FC = () => {
   const { cartItemCount } = useCart();
+  const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchTerm.trim())}`);
+    }
+  };
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-10">
@@ -11,6 +20,17 @@ const Header: React.FC = () => {
         <Link to="/" className="text-2xl font-bold text-gray-800">
           E-commerce
         </Link>
+
+        <form onSubmit={handleSearch} className="w-1/3">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search for products..."
+            className="w-full px-4 py-2 border rounded-full"
+          />
+        </form>
+
         <nav>
           <ul className="flex space-x-6 items-center">
             <li>

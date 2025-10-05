@@ -7,3 +7,4 @@ pydantic[email]
 passlib[bcrypt]
 python-jose[cryptography]
 stripe
+sqlalchemy-utils

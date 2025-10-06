@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from '../../../services/api';
-import { TopSellingProduct } from '../../../types/reports';
+import type { TopSellingProduct } from '../../../types/reports';
 
 const TopSellingProducts: React.FC = () => {
   const [products, setProducts] = useState<TopSellingProduct[]>([]);

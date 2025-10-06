@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import apiClient from '../../services/api';
-import { Product, ProductVariant } from '../../types/product';
+import type { Product } from '../../types/product';
+import type { ProductVariant } from '../../types/product-variant';
 import { useCart } from '../../context/CartContext';
 
 const ProductDetail: React.FC = () => {

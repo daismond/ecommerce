@@ -1,6 +1,6 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import { createContext, useState, useContext, useEffect, type ReactNode } from 'react';
 import apiClient from '../services/api';
-import { User } from '../types/user'; // I will create this type next
+import type { User } from '../types/user'; // I will create this type next
 
 interface AuthContextType {
   user: User | null;
@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     fetchUser();
   }, [token]);
 
-  const login = async (email, password) => {
+  const login = async (email: string, password: string) => {
     const response = await apiClient.post('/auth/login', new URLSearchParams({ username: email, password }));
     const { access_token } = response.data;
     setToken(access_token);

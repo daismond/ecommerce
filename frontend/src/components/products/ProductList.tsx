@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import apiClient from '../../services/api';
-import { Product } from '../../types/product';
+import type { Product } from '../../types/product';
 import ProductCard from './ProductCard';
 
 const ProductList: React.FC = () => {

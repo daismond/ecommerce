@@ -1,8 +1,10 @@
-export enum UserRole {
-  Customer = "customer",
-  Admin = "admin",
-  Manager = "manager",
-}
+export type UserRole = "customer" | "admin" | "manager";
+
+export const UserRole = {
+  Customer: "customer" as const,
+  Admin: "admin" as const,
+  Manager: "manager" as const,
+};
 
 export interface User {
   id: string; // uuid

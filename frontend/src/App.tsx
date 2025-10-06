@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import ProductCatalogPage from './pages/ProductCatalogPage';
 import ProductDetailPage from './pages/ProductDetailPage';
@@ -24,58 +24,47 @@ import AdminCustomerListPage from './pages/admin/AdminCustomerListPage';
 import UserOrderListPage from './pages/account/UserOrderListPage';
 import UserOrderDetailPage from './pages/account/UserOrderDetailPage';
 
-// Account placeholder pages is now replaced by the actual component
-
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Public Routes */}
-        <Route path="/*" element={
-          <Layout>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/products" element={<ProductCatalogPage />} />
-              <Route path="/products/:productId" element={<ProductDetailPage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </Layout>
-        } />
+        {/* Public and User Account Routes */}
+        <Route element={<Layout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/products" element={<ProductCatalogPage />} />
+          <Route path="/products/:productId" element={<ProductDetailPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/login" element={<LoginPage />} />
+
+          <Route element={<UserProtectedRoute />}>
+            <Route path="/account" element={<AccountLayout />}>
+              <Route index element={<Navigate to="orders" />} />
+              <Route path="orders" element={<UserOrderListPage />} />
+              <Route path="orders/:orderId" element={<UserOrderDetailPage />} />
+            </Route>
+          </Route>
+          
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
 
         {/* Admin Routes */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/admin/*" element={
-            <AdminLayout>
-              <Routes>
-                <Route path="dashboard" element={<AdminDashboardPage />} />
-                <Route path="products" element={<AdminProductListPage />} />
-                <Route path="products/new" element={<AdminProductFormPage />} />
-                <Route path="products/edit/:productId" element={<AdminProductFormPage />} />
-                <Route path="orders" element={<AdminOrderListPage />} />
-                <Route path="orders/:orderId" element={<AdminOrderDetailPage />} />
-                <Route path="customers" element={<AdminCustomerListPage />} />
-              </Routes>
-            </AdminLayout>
-          } />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Navigate to="dashboard" />} />
+            <Route path="dashboard" element={<AdminDashboardPage />} />
+            <Route path="products" element={<AdminProductListPage />} />
+            <Route path="products/new" element={<AdminProductFormPage />} />
+            <Route path="products/edit/:productId" element={<AdminProductFormPage />} />
+            <Route path="orders" element={<AdminOrderListPage />} />
+            <Route path="orders/:orderId" element={<AdminOrderDetailPage />} />
+            <Route path="customers" element={<AdminCustomerListPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
         </Route>
 
-        {/* User Account Routes */}
-        <Route element={<UserProtectedRoute />}>
-            <Route path="/account/*" element={
-                <Layout>
-                    <AccountLayout>
-                        <Routes>
-                            <Route path="orders" element={<UserOrderListPage />} />
-                            <Route path="orders/:orderId" element={<UserOrderDetailPage />} />
-                            {/* Other account pages will go here */}
-                        </Routes>
-                    </AccountLayout>
-                </Layout>
-            } />
-        </Route>
+        {/* A top-level Not Found for routes that don't match /admin/* or other top-level paths */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
   );

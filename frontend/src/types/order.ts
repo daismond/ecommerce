@@ -1,11 +1,11 @@
-import { ProductVariant } from './product';
+import type { ProductVariantWithProduct } from './responses';
 
 export interface OrderItem {
   id: string;
   product_variant_id: string;
   quantity: number;
   unit_price: number;
-  product_variant: ProductVariant;
+  product_variant: ProductVariantWithProduct;
 }
 
 export interface Order {

@@ -19,7 +19,7 @@ def get_db():
     finally:
         db.close()
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> models.user.User:
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> models.User:
     """
     Decodes the JWT token to get the current user.
     """
@@ -42,7 +42,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         raise credentials_exception
     return user
 
-def get_current_active_user(current_user: models.user.User = Depends(get_current_user)) -> models.user.User:
+def get_current_active_user(current_user: models.User = Depends(get_current_user)) -> models.User:
     """
     Checks if the current user is active.
     """
@@ -50,18 +50,18 @@ def get_current_active_user(current_user: models.user.User = Depends(get_current
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user")
     return current_user
 
-def get_current_admin_user(current_user: models.user.User = Depends(get_current_active_user)) -> models.user.User:
+def get_current_admin_user(current_user: models.User = Depends(get_current_active_user)) -> models.User:
     """
     Checks if the current active user has admin or manager privileges.
     """
-    if current_user.role not in [models.user.UserRole.admin, models.user.UserRole.manager]:
+    if current_user.role not in [models.UserRole.admin, models.UserRole.manager]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="The user doesn't have enough privileges"
         )
     return current_user
 
-def get_current_user_optional(token: Optional[str] = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> Optional[models.user.User]:
+def get_current_user_optional(token: Optional[str] = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> Optional[models.User]:
     """
     Decodes the JWT token to get the current user, but returns None if token is invalid or not provided.
     This is useful for endpoints that can be accessed by both guests and logged-in users.

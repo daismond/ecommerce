@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+import uuid
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -10,7 +11,7 @@ router = APIRouter()
 @router.get("/me", response_model=List[schemas.order.Order])
 def read_user_orders(
     db: Session = Depends(get_db),
-    current_user: models.user.User = Depends(get_current_active_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     """
     Retrieve all orders for the current logged-in user.
@@ -21,7 +22,7 @@ def read_user_orders(
 def read_user_order(
     order_id: uuid.UUID,
     db: Session = Depends(get_db),
-    current_user: models.user.User = Depends(get_current_active_user)
+    current_user: models.User = Depends(get_current_active_user)
 ):
     """
     Retrieve a single order by ID for the current logged-in user.

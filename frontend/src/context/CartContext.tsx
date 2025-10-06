@@ -1,5 +1,5 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { Cart, CartItem } from '../types/cart';
+import { createContext, useState, useContext, useEffect, type ReactNode } from 'react';
+import type { Cart } from '../types/cart';
 import apiClient from '../services/api';
 
 interface CartContextType {

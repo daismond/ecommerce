@@ -1,4 +1,5 @@
-import { Product, ProductVariant } from './product';
+import type { Product } from './product';
+import type { ProductVariant } from './product-variant';
 
 export interface SalesSummary {
   total_revenue: number;

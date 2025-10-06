@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import apiClient from '../../services/api';
-import { Review } from '../../types/review';
+import type { Review } from '../../types/review';
 import StarRating from './StarRating';
 import ReviewForm from './ReviewForm';
 

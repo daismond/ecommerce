@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import apiClient from '../../services/api';
-import { Product, ProductVariant } from '../../types/product';
-// We'll need a category type as well
-// import { Category } from '../../types/category';
+import type { Product } from '../../types/product';
+import type { ProductVariant } from '../../types/product-variant';
 
 // Simplified category type for now
 interface Category {
@@ -11,15 +10,18 @@ interface Category {
   name: string;
 }
 
+type ProductFormData = Omit<Product, 'id' | 'variants'>;
+
 const ProductForm: React.FC = () => {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
   const isEditMode = Boolean(productId);
 
-  const [product, setProduct] = useState({
+  const [product, setProduct] = useState<ProductFormData>({
     title: '',
     slug: '',
-    description: '',
+    short_description: null,
+    description: null,
     category_id: '',
     is_published: false,
   });
@@ -41,7 +43,7 @@ const ProductForm: React.FC = () => {
       setLoading(true);
       apiClient.get<Product>(`/products/${productId}`)
         .then(response => {
-          const { variants, ...productData } = response.data;
+          const { variants, id, ...productData } = response.data;
           setProduct(productData);
           setVariants(variants);
         })
@@ -101,7 +103,7 @@ const ProductForm: React.FC = () => {
       {/* Product Details */}
       <input name="title" value={product.title} onChange={handleProductChange} placeholder="Product Title" className="w-full p-2 border" required />
       <input name="slug" value={product.slug} onChange={handleProductChange} placeholder="Product Slug (e.g., my-product)" className="w-full p-2 border" required />
-      <textarea name="description" value={product.description} onChange={handleProductChange} placeholder="Description" className="w-full p-2 border" />
+      <textarea name="description" value={product.description || ''} onChange={handleProductChange} placeholder="Description" className="w-full p-2 border" />
       <select name="category_id" value={product.category_id} onChange={handleProductChange} className="w-full p-2 border" required>
         <option value="">Select a Category</option>
         {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}

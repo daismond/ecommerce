@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import apiClient from '../../services/api';
-import { Product } from '../../types/product';
+import type { Product } from '../../types/product';
 
 const AdminProductListPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import apiClient from '../../services/api';
-import { Order } from '../../types/order';
+import type { Order } from '../../types/order';
 
 const AdminOrderListPage: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from '../../services/api';
-import { User, UserRole } from '../../types/user';
+import { UserRole, type User } from '../../types/user';
 
 const AdminCustomerListPage: React.FC = () => {
   const [customers, setCustomers] = useState<User[]>([]);

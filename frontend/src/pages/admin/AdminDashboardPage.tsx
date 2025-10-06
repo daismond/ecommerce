@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from '../../services/api';
-import { SalesSummary } from '../../types/reports';
+import type { SalesSummary } from '../../types/reports';
 import StatCard from '../../components/admin/dashboard/StatCard';
 import TopSellingProducts from '../../components/admin/dashboard/TopSellingProducts';
 import CriticalStock from '../../components/admin/dashboard/CriticalStock';

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from '../../../services/api';
-import { ProductVariant } from '../../../types/product';
+import type { ProductVariantWithProduct } from '../../../types/responses';
 
 const CriticalStock: React.FC = () => {
-  const [variants, setVariants] = useState<ProductVariant[]>([]);
+  const [variants, setVariants] = useState<ProductVariantWithProduct[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    apiClient.get<ProductVariant[]>('/admin/reports/critical-stock')
+    apiClient.get<ProductVariantWithProduct[]>('/admin/reports/critical-stock')
       .then(response => {
         setVariants(response.data);
         setLoading(false);

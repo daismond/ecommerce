@@ -1,11 +1,13 @@
-import React from 'react';
-import CartView from '../components/cart/CartView';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
 
-const CartPage: React.FC = () => {
+const CartPage = () => {
   return (
-    <div>
-      <CartView />
-    </div>
+    <Container>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Shopping Cart
+      </Typography>
+    </Container>
   );
 };
 

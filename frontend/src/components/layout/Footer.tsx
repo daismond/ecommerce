@@ -1,15 +1,29 @@
-import React from 'react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
 
-const Footer: React.FC = () => {
+const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-white mt-12">
-      <div className="container mx-auto px-4 py-6 text-center">
-        <p>&copy; {new Date().getFullYear()} E-commerce Platform. All rights reserved.</p>
-        <p className="text-sm text-gray-400 mt-2">
-          Built with React, FastAPI, and Tailwind CSS.
-        </p>
-      </div>
-    </footer>
+    <Box
+      component="footer"
+      sx={{
+        py: 3,
+        px: 2,
+        mt: 'auto',
+        backgroundColor: (theme) =>
+          theme.palette.mode === 'light'
+            ? theme.palette.grey[200]
+            : theme.palette.grey[800],
+      }}
+    >
+      <Container maxWidth="sm">
+        <Typography variant="body1" align="center">
+          {'Copyright © '}
+          E-commerce {new Date().getFullYear()}
+          {'.'}
+        </Typography>
+      </Container>
+    </Box>
   );
 };
 

@@ -1,81 +1,61 @@
-import { createContext, useState, useContext, useEffect, type ReactNode } from 'react';
-import type { Cart } from '../types/cart';
-import apiClient from '../services/api';
+import { createContext, useState, useContext, ReactNode } from 'react';
+import type { Product, ProductVariant } from '../types/product.ts';
+
+export interface CartItem {
+    product: Product;
+    variant: ProductVariant;
+    quantity: number;
+}
 
 interface CartContextType {
-  cart: Cart | null;
-  loading: boolean;
-  addToCart: (variantId: string, quantity: number) => Promise<void>;
-  removeFromCart: (itemId: string) => Promise<void>;
-  cartItemCount: number;
+  isCartOpen: boolean;
+  toggleCart: () => void;
+  cartItems: CartItem[];
+  addToCart: (product: Product, variant: ProductVariant, quantity?: number) => void;
+  // We'll add removeFromCart, updateQuantity etc. later
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [cart, setCart] = useState<Cart | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+interface CartProviderProps {
+  children: ReactNode;
+}
 
-  const getCartId = (): string | null => localStorage.getItem('cart_id');
-  const setCartId = (id: string) => localStorage.setItem('cart_id', id);
+export const CartProvider = ({ children }: CartProviderProps) => {
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  const fetchCart = async () => {
-    setLoading(true);
-    try {
-      const cartId = getCartId();
-      const headers = cartId ? { 'X-Cart-ID': cartId } : {};
-      const response = await apiClient.get<Cart>('/cart/', { headers });
-      setCart(response.data);
-      if (response.headers['x-cart-id']) {
-        setCartId(response.headers['x-cart-id']);
-      }
-    } catch (error) {
-      console.error('Failed to fetch cart:', error);
-    } finally {
-      setLoading(false);
-    }
+  const toggleCart = () => {
+    setIsCartOpen(!isCartOpen);
   };
 
-  useEffect(() => {
-    fetchCart();
-  }, []);
-
-  const addToCart = async (variantId: string, quantity: number) => {
-    try {
-      const cartId = getCartId();
-      const headers = cartId ? { 'X-Cart-ID': cartId } : {};
-      const response = await apiClient.post<Cart>(
-        '/cart/items',
-        { product_variant_id: variantId, quantity },
-        { headers }
+  const addToCart = (product: Product, variant: ProductVariant, quantity: number = 1) => {
+    setCartItems((prevItems) => {
+      const existingItemIndex = prevItems.findIndex(
+        (item) => item.variant.id === variant.id
       );
-      setCart(response.data);
-      if (response.headers['x-cart-id']) {
-        setCartId(response.headers['x-cart-id']);
+
+      if (existingItemIndex > -1) {
+        // Variant already in cart, update quantity
+        const newItems = [...prevItems];
+        newItems[existingItemIndex].quantity += quantity;
+        return newItems;
+      } else {
+        // Add new variant to cart
+        return [...prevItems, { product, variant, quantity }];
       }
-    } catch (error) {
-      console.error('Failed to add item to cart:', error);
-    }
+    });
+    setIsCartOpen(true);
   };
 
-  const removeFromCart = async (itemId: string) => {
-    try {
-      const cartId = getCartId();
-      const headers = cartId ? { 'X-Cart-ID': cartId } : {};
-      const response = await apiClient.delete<Cart>(`/cart/items/${itemId}`, { headers });
-      setCart(response.data);
-    } catch (error) {
-      console.error('Failed to remove item from cart:', error);
-    }
+  const value = {
+    isCartOpen,
+    toggleCart,
+    cartItems,
+    addToCart,
   };
 
-  const cartItemCount = cart?.items.reduce((total, item) => total + item.quantity, 0) || 0;
-
-  return (
-    <CartContext.Provider value={{ cart, loading, addToCart, removeFromCart, cartItemCount }}>
-      {children}
-    </CartContext.Provider>
-  );
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
 
 export const useCart = () => {

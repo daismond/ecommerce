@@ -16,6 +16,7 @@ class ProductVariantCreate(ProductVariantBase):
 
 class ProductVariant(ProductVariantBase):
     id: uuid.UUID
+    product: 'Product' # Add this line
 
     class Config:
         orm_mode = True
@@ -38,3 +39,6 @@ class Product(ProductBase):
 
     class Config:
         orm_mode = True
+
+# This is needed for forward references
+ProductVariant.update_forward_refs()

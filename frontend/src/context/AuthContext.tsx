@@ -1,67 +1,62 @@
-import { createContext, useState, useContext, useEffect, type ReactNode } from 'react';
-import apiClient from '../services/api';
-import type { User } from '../types/user'; // I will create this type next
+import { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import api from '../services/api';
+
+// This should match the User schema from the backend
+export interface User {
+    id: string;
+    email: string;
+    first_name: string | null;
+    last_name: string | null;
+    is_active: boolean;
+    role: 'customer' | 'admin' | 'manager';
+}
 
 interface AuthContextType {
+  isAuthenticated: boolean;
   user: User | null;
   token: string | null;
-  loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  isLoading: boolean;
+  login: (email, password) => Promise<void>;
   logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// ...
 
-// Interceptor to add auth token to requests
-apiClient.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
-  const [loading, setLoading] = useState<boolean>(true);
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
       if (token) {
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         try {
-          const response = await apiClient.get<User>('/users/me');
+          const response = await api.get('/users/me');
           setUser(response.data);
         } catch (error) {
-          console.error("Failed to fetch user, token might be invalid.", error);
-          setToken(null);
-          localStorage.removeItem('token');
+          console.error("Failed to fetch user, token might be invalid", error);
+          logout();
+        } finally {
+          setIsLoading(false);
         }
+      } else {
+        setIsLoading(false);
       }
-      setLoading(false);
     };
     fetchUser();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  const login = async (email: string, password: string) => {
-    const response = await apiClient.post('/auth/login', new URLSearchParams({ username: email, password }));
-    const { access_token } = response.data;
-    setToken(access_token);
-    localStorage.setItem('token', access_token);
-  };
-
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem('token');
-  };
+  // ... (login and logout functions)
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated: !!user, user, token, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
 
 export const useAuth = () => {
   const context = useContext(AuthContext);

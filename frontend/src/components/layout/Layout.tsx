@@ -1,17 +1,23 @@
-import React from 'react';
+import { ReactNode } from 'react';
+import Box from '@mui/material/Box';
 import Header from './Header';
 import Footer from './Footer';
-import { Outlet } from 'react-router-dom';
+import { CartDrawer } from '../cart/CartDrawer';
 
-const Layout: React.FC = () => {
+interface LayoutProps {
+  children: ReactNode;
+}
+
+const Layout = ({ children }: LayoutProps) => {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-8">
-        <Outlet />
-      </main>
+      <CartDrawer />
+      <Box component="main" sx={{ flexGrow: 1, py: 3 }}>
+        {children}
+      </Box>
       <Footer />
-    </div>
+    </Box>
   );
 };
 

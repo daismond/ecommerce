@@ -1,16 +1,21 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import './index.css';
-import App from './App.tsx';
-import { CartProvider } from './context/CartContext.tsx';
-import { AuthProvider } from './context/AuthContext.tsx';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import App from './App';
+import theme from './theme';
+import { CartProvider } from './context/CartContext';
+import { AuthProvider } from './context/AuthContext';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AuthProvider>
-      <CartProvider>
-        <App />
-      </CartProvider>
-    </AuthProvider>
+    <ThemeProvider theme={theme}>
+      <AuthProvider>
+        <CartProvider>
+          <CssBaseline />
+          <App />
+        </CartProvider>
+      </AuthProvider>
+    </ThemeProvider>
   </StrictMode>,
 );

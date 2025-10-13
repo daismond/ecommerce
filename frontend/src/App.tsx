@@ -1,70 +1,58 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
-import ProductCatalogPage from './pages/ProductCatalogPage';
-import ProductDetailPage from './pages/ProductDetailPage';
-import CartPage from './pages/CartPage';
-import CheckoutPage from './pages/CheckoutPage';
-import AdminLayout from './components/admin/AdminLayout';
-import ProtectedRoute from './components/auth/ProtectedRoute';
-import UserProtectedRoute from './components/auth/UserProtectedRoute';
-import AccountLayout from './components/account/AccountLayout';
+import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
+import CartPage from './pages/CartPage';
+import ProductDetailPage from './pages/ProductDetailPage';
+import RegisterPage from './pages/RegisterPage';
+import OrderHistoryPage from './pages/OrderHistoryPage';
+import ProfilePage from './pages/ProfilePage';
+import CheckoutPage from './pages/CheckoutPage';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
-// Placeholder pages for routing
-const HomePage = () => <h1 className="text-3xl font-bold">Home Page</h1>;
-const NotFoundPage = () => <h1 className="text-3xl font-bold">404 - Page Not Found</h1>;
-
-import AdminProductListPage from './pages/admin/AdminProductListPage';
-import AdminProductFormPage from './pages/admin/AdminProductFormPage';
-import AdminOrderListPage from './pages/admin/AdminOrderListPage';
-import AdminOrderDetailPage from './pages/admin/AdminOrderDetailPage';
-import AdminDashboardPage from './pages/admin/AdminDashboardPage';
-import AdminCustomerListPage from './pages/admin/AdminCustomerListPage';
-
-import UserOrderListPage from './pages/account/UserOrderListPage';
-import UserOrderDetailPage from './pages/account/UserOrderDetailPage';
+// Admin imports
+import AdminProtectedRoute from './components/auth/AdminProtectedRoute';
+import AdminLayout from './components/layout/AdminLayout';
+import AdminDashboard from './pages/admin/DashboardPage';
+import ProductManagementPage from './pages/admin/ProductManagementPage';
+import CategoryManagementPage from './pages/admin/CategoryManagementPage';
+import ProductCreatePage from './pages/admin/ProductCreatePage';
+import ProductEditPage from './pages/admin/ProductEditPage';
+import CategoryCreatePage from './pages/admin/CategoryCreatePage';
+import CategoryEditPage from './pages/admin/CategoryEditPage';
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Public and User Account Routes */}
-        <Route element={<Layout />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/products" element={<ProductCatalogPage />} />
-          <Route path="/products/:productId" element={<ProductDetailPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/login" element={<LoginPage />} />
+        {/* Main application layout */}
+        <Route path="/" element={<Layout />}>
+          <Route index element={<HomePage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<RegisterPage />} />
+          <Route path="cart" element={<CartPage />} />
+          <Route path="products/:id" element={<ProductDetailPage />} />
 
-          <Route element={<UserProtectedRoute />}>
-            <Route path="/account" element={<AccountLayout />}>
-              <Route index element={<Navigate to="orders" />} />
-              <Route path="orders" element={<UserOrderListPage />} />
-              <Route path="orders/:orderId" element={<UserOrderDetailPage />} />
-            </Route>
-          </Route>
-          
-          <Route path="*" element={<NotFoundPage />} />
-        </Route>
-
-        {/* Admin Routes */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Navigate to="dashboard" />} />
-            <Route path="dashboard" element={<AdminDashboardPage />} />
-            <Route path="products" element={<AdminProductListPage />} />
-            <Route path="products/new" element={<AdminProductFormPage />} />
-            <Route path="products/edit/:productId" element={<AdminProductFormPage />} />
-            <Route path="orders" element={<AdminOrderListPage />} />
-            <Route path="orders/:orderId" element={<AdminOrderDetailPage />} />
-            <Route path="customers" element={<AdminCustomerListPage />} />
-            <Route path="*" element={<NotFoundPage />} />
+          {/* Protected User Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="checkout" element={<CheckoutPage />} />
+            <Route path="orders" element={<OrderHistoryPage />} />
           </Route>
         </Route>
 
-        {/* A top-level Not Found for routes that don't match /admin/* or other top-level paths */}
-        <Route path="*" element={<NotFoundPage />} />
+        {/* Admin Section */}
+        <Route path="/admin" element={<AdminProtectedRoute />}>
+          <Route element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="products" element={<ProductManagementPage />} />
+            <Route path="products/new" element={<ProductCreatePage />} />
+            <Route path="products/edit/:id" element={<ProductEditPage />} />
+            <Route path="categories" element={<CategoryManagementPage />} />
+            <Route path="categories/new" element={<CategoryCreatePage />} />
+            <Route path="categories/edit/:id" element={<CategoryEditPage />} />
+          </Route>
+        </Route>
       </Routes>
     </Router>
   );

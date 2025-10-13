@@ -1,9 +1,10 @@
+
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Box, CircularProgress } from '@mui/material';
 
-const ProtectedRoute = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+const AdminProtectedRoute = () => {
+  const { isAuthenticated, user, isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -13,7 +14,11 @@ const ProtectedRoute = () => {
     );
   }
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return user?.role === 'admin' ? <Outlet /> : <Navigate to="/" replace />;
 };
 
-export default ProtectedRoute;
+export default AdminProtectedRoute;

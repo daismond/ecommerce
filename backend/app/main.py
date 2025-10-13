@@ -1,7 +1,17 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from .api.v1.endpoints import auth, products, categories, admin, cart, checkout, webhooks, users, orders, reports, reviews
 
 app = FastAPI(title="E-commerce API")
+
+# CORS Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 # API routers
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])

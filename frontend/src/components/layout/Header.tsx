@@ -1,67 +1,158 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import StorefrontIcon from '@mui/icons-material/Storefront';
+import { Link } from 'react-router-dom';
+import { Box, Container, InputBase, alpha, styled, Badge, Menu, MenuItem } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 
-const Header: React.FC = () => {
-  const { cartItemCount } = useCart();
-  const [searchTerm, setSearchTerm] = useState('');
-  const navigate = useNavigate();
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    width: 'auto',
+  },
+}));
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchTerm.trim()) {
-      navigate(`/products?search=${encodeURIComponent(searchTerm.trim())}`);
-    }
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: '20ch',
+    },
+  },
+}));
+
+const Header = () => {
+  const { toggleCart, cartItems } = useCart();
+  const { isAuthenticated, user, logout } = useAuth();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    logout();
+    handleClose();
   };
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-10">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold text-gray-800">
-          E-commerce
-        </Link>
+    <AppBar position="static" color="primary" elevation={0}>
+      <Container maxWidth="lg">
+        <Toolbar disableGutters>
+          <StorefrontIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <Typography
+            variant="h6"
+            noWrap
+            component={Link}
+            to="/"
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            LOGO
+          </Typography>
 
-        <form onSubmit={handleSearch} className="w-1/3">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search for products..."
-            className="w-full px-4 py-2 border rounded-full"
-          />
-        </form>
+          {/* ... (mobile menu setup) ... */}
 
-        <nav>
-          <ul className="flex space-x-6 items-center">
-            <li>
-              <Link to="/" className="text-gray-600 hover:text-gray-900">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link to="/products" className="text-gray-600 hover:text-gray-900">
-                Products
-              </Link>
-            </li>
-            <li>
-              <Link to="/cart" className="text-gray-600 hover:text-gray-900 relative">
-                Cart
-                {cartItemCount > 0 && (
-                  <span className="absolute -top-2 -right-4 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {cartItemCount}
-                  </span>
-                )}
-              </Link>
-            </li>
-            <li>
-              <Link to="/login" className="text-gray-600 hover:text-gray-900">
-                Login
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ 'aria-label': 'search' }}
+              />
+            </Search>
+          </Box>
+
+          <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center' }}>
+            {isAuthenticated && user ? (
+              <div>
+                <IconButton
+                  size="large"
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={handleMenu}
+                  color="inherit"
+                >
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                >
+                  <MenuItem disabled>Hi, {user.first_name}</MenuItem>
+                  <MenuItem component={Link} to="/profile" onClick={handleClose}>Profile</MenuItem>
+                  <MenuItem component={Link} to="/orders" onClick={handleClose}>My Orders</MenuItem>
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                </Menu>
+              </div>
+            ) : (
+              <Button color="inherit" component={Link} to="/login">Login</Button>
+            )}
+            <IconButton onClick={toggleCart} color="inherit">
+              <Badge badgeContent={cartItems.length} color="secondary">
+                <ShoppingCartIcon />
+              </Badge>
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 };
 
